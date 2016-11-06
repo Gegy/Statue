@@ -90,6 +90,7 @@ public class ClientEventHandler {
                         GlStateManager.popMatrix();
                         GlStateManager.disableAlpha();
                         GlStateManager.disableRescaleNormal();
+                        GlStateManager.glLineWidth(2.0F);
                     }
                 }
             }

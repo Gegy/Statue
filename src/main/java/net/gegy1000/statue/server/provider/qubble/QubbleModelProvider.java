@@ -173,10 +173,13 @@ public class QubbleModelProvider implements ModelProvider<StatueQubbleModel> {
 
     protected List<File> getModelFiles() {
         List<File> list = new ArrayList<>();
-        for (File modelFile : MODEL_DIRECTORY.listFiles()) {
-            if (modelFile.isFile() && modelFile.getName().endsWith(".qbl")) {
-                list.add(modelFile);
+        try {
+            for (File modelFile : MODEL_DIRECTORY.listFiles()) {
+                if (modelFile.isFile() && modelFile.getName().endsWith(".qbl")) {
+                    list.add(modelFile);
+                }
             }
+        } catch (Exception e) {
         }
         return list;
     }

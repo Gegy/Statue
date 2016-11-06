@@ -5,6 +5,7 @@ import net.gegy1000.statue.server.api.DefaultRenderedItem;
 import net.gegy1000.statue.server.block.entity.StatueBlockEntity;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -31,6 +32,7 @@ public class StatueBlock extends BlockContainer implements DefaultRenderedItem {
         this.setHardness(1.0F);
         this.setCreativeTab(CreativeTabs.DECORATIONS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setSoundType(SoundType.WOOD);
     }
 
     @Override

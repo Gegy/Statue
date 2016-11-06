@@ -30,6 +30,9 @@ public class OutlinedTabulaModel extends AdvancedModelBase implements OutlineRen
         container.getCubeGroups().forEach(this::parseCubeGroup);
         this.updateDefaultPose();
         this.scale = container.getScale();
+        if (this.scale == null) {
+            this.scale = new double[] { 1.0, 1.0, 1.0 };
+        }
     }
 
     private void parseCubeGroup(TabulaCubeGroupContainer container) {
