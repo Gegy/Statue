@@ -33,7 +33,6 @@ public class TransformProperty implements IFloatRangeProperty, IStringProperty {
     public void setFloat(float value) {
         this.value = Float.parseFloat(Statue.DEFAULT_FORMAT.format(value));
         this.submit.accept(this.value);
-        System.out.println(value + " - " + this.value);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class TabulaModelProvider implements ModelProvider<StatueTabulaModel> {
     }
 
     @Override
-    public StatueTabulaModel getModel(File file) {
+    public StatueTabulaModel getModel(File file, String name) {
         try {
             ZipFile zip = new ZipFile(file);
             Enumeration<? extends ZipEntry> entries = zip.entries();

@@ -5,13 +5,13 @@ import io.netty.buffer.ByteBuf;
 import java.io.File;
 import java.util.Map;
 
-public interface ModelProvider<T extends StatueModel> {
+public interface ModelProvider<M extends StatueModel> {
     Map<String, File> getModels();
-    T getModel(File file);
+    M getModel(File file, String name);
 
-    void serialize(T model, ByteBuf buf);
+    void serialize(M model, ByteBuf buf);
 
-    T deserialize(ByteBuf buf);
+    M deserialize(ByteBuf buf);
 
     String getName();
 }

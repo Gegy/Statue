@@ -35,7 +35,7 @@ public class QubbleModelProvider implements ModelProvider<StatueQubbleModel> {
     }
 
     @Override
-    public StatueQubbleModel getModel(File file) {
+    public StatueQubbleModel getModel(File file, String name) {
         try {
             DataInputStream in = new DataInputStream(new FileInputStream(file));
             NBTTagCompound compound = CompressedStreamTools.readCompressed(in);

@@ -113,7 +113,7 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
         }
 
         this.addElement(this.modelList = new ListElement<>(this, 90.0F, 14.0F, 85, this.height - 32, this.modelNames, (list) -> {
-            StatueModel model = this.selectedProvider.getModel(this.models.get(list.getSelectedEntry()));
+            StatueModel model = this.selectedProvider.getModel(this.models.get(list.getSelectedEntry()), list.getSelectedEntry());
             if (model != null) {
                 this.selectedModel = model;
                 this.selectedRenderModel = model.create();

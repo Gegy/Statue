@@ -9,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -61,6 +62,7 @@ public class StatueRenderer extends TileEntitySpecialRenderer<StatueBlockEntity>
                 MINECRAFT.getTextureManager().bindTexture(texture);
             }
             GlStateManager.enableRescaleNormal();
+            GlStateManager.disableCull();
             GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
             GlStateManager.translate(entity.getInterpolatedProperty(StatueProperty.OFFSET_X, partialTicks), entity.getInterpolatedProperty(StatueProperty.OFFSET_Y, partialTicks), entity.getInterpolatedProperty(StatueProperty.OFFSET_Z, partialTicks));
             GlStateManager.rotate(entity.getInterpolatedProperty(StatueProperty.ROTATION_X, partialTicks), 1.0F, 0.0F, 0.0F);
@@ -70,11 +72,18 @@ public class StatueRenderer extends TileEntitySpecialRenderer<StatueBlockEntity>
             GlStateManager.translate(0.0F, -1.5F, 0.0F);
             this.renderModel(model, 1.0F, 1.0F);
             GlStateManager.disableRescaleNormal();
-            if (texture == null) {
-                GlStateManager.enableTexture2D();
-            }
+            GlStateManager.enableCull();
         }
         GlStateManager.popMatrix();
+        if (entity != null && MINECRAFT.getRenderManager().isDebugBoundingBox()) {
+            GlStateManager.disableTexture2D();
+            GlStateManager.disableLighting();
+            GlStateManager.glLineWidth(2.0F);
+            GlStateManager.pushMatrix();
+            RenderGlobal.drawBoundingBox(x, y, z, x + 1, y + 1, z + 1, 1.0F, 0.0F, 0.0F, 1.0F);
+            GlStateManager.popMatrix();
+        }
+        GlStateManager.enableTexture2D();
     }
 
     private void renderModel(ModelBase model, float scale, float lightness) {

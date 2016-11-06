@@ -89,7 +89,7 @@ public class ModelViewElement<T extends IElementGUI & ModelViewGUI> extends Elem
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.loadIdentity();
-        GLU.gluPerspective(30.0F, (float) this.getWidth() / this.getHeight(), 1.0F, 10000.0F);
+        GLU.gluPerspective(30.0F, (float) this.gui.getWidth() / this.gui.getHeight(), 1.0F, 10000.0F);
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.loadIdentity();
         GlStateManager.enableBlend();
@@ -121,13 +121,16 @@ public class ModelViewElement<T extends IElementGUI & ModelViewGUI> extends Elem
             }
 
             GlStateManager.pushMatrix();
+            GlStateManager.disableCull();
             GlStateManager.translate(this.gui.getInterpolatedProperty(StatueProperty.OFFSET_X, partialTicks), this.gui.getInterpolatedProperty(StatueProperty.OFFSET_Y, partialTicks), this.gui.getInterpolatedProperty(StatueProperty.OFFSET_Z, partialTicks));
             GlStateManager.rotate(this.gui.getInterpolatedProperty(StatueProperty.ROTATION_X, partialTicks), 1.0F, 0.0F, 0.0F);
             GlStateManager.rotate(this.gui.getInterpolatedProperty(StatueProperty.ROTATION_Y, partialTicks), 0.0F, 1.0F, 0.0F);
             GlStateManager.rotate(this.gui.getInterpolatedProperty(StatueProperty.ROTATION_Z, partialTicks), 0.0F, 0.0F, 1.0F);
             GlStateManager.scale(this.gui.getInterpolatedProperty(StatueProperty.SCALE_X , partialTicks), this.gui.getInterpolatedProperty(StatueProperty.SCALE_Y, partialTicks), this.gui.getInterpolatedProperty(StatueProperty.SCALE_Z, partialTicks));
             GlStateManager.translate(0.0F, -1.5F, 0.0F);
+            GlStateManager.scale(-1.0F, 1.0F, 1.0F);
             model.render(null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+            GlStateManager.enableCull();
             GlStateManager.popMatrix();
 
             GlStateManager.pushMatrix();

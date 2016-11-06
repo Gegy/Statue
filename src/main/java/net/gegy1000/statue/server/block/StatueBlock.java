@@ -12,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -71,7 +72,11 @@ public class StatueBlock extends BlockContainer implements DefaultRenderedItem {
         world.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing().getOpposite()), 2);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof StatueBlockEntity) {
-            ((StatueBlockEntity) tile).setOwner(placer.getUniqueID());
+            StatueBlockEntity statue = (StatueBlockEntity) tile;
+            statue.setOwner(placer.getUniqueID());
+            if (placer instanceof EntityPlayerMP) {
+                statue.watchChunk((EntityPlayerMP) placer);
+            }
         }
     }
 

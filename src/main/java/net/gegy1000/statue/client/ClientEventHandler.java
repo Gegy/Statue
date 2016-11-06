@@ -47,7 +47,7 @@ public class ClientEventHandler {
                         GlStateManager.disableTexture2D();
                         GlStateManager.disableBlend();
                         GlStateManager.enableRescaleNormal();
-                        GlStateManager.enableCull();
+                        GlStateManager.disableCull();
                         RenderHelper.enableStandardItemLighting();
                         int light = player.worldObj.getCombinedLight(tile.getPos(), 0);
                         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light % 65536, light >> 16);
@@ -88,7 +88,6 @@ public class ClientEventHandler {
                         ClientProxy.MINECRAFT.entityRenderer.disableLightmap();
                         GlStateManager.popMatrix();
                         GlStateManager.disableRescaleNormal();
-                        GlStateManager.disableCull();
                     }
                 }
             }

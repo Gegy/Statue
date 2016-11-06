@@ -60,6 +60,7 @@ public class OutlinedTabulaModel extends AdvancedModelBase implements OutlineRen
         double[] offset = cube.getOffset();
         int[] dimensions = cube.getDimensions();
         OutlinedModelRenderer box = new OutlinedModelRenderer(this, cube.getName(), textureOffset[0], textureOffset[1]);
+        box.mirror = cube.isTextureMirrorEnabled();
         box.setRotationPoint((float) position[0], (float) position[1], (float) position[2]);
         box.addBox((float) offset[0], (float) offset[1], (float) offset[2], dimensions[0], dimensions[1], dimensions[2], 0.0F);
         box.rotateAngleX = (float) Math.toRadians(rotation[0]);
