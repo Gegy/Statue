@@ -123,8 +123,8 @@ public class ModelViewElement<T extends IElementGUI & ModelViewGUI> extends Elem
             GlStateManager.pushMatrix();
             GlStateManager.disableCull();
             GlStateManager.translate(this.gui.getInterpolatedProperty(StatueProperty.OFFSET_X, partialTicks), this.gui.getInterpolatedProperty(StatueProperty.OFFSET_Y, partialTicks), this.gui.getInterpolatedProperty(StatueProperty.OFFSET_Z, partialTicks));
-            GlStateManager.rotate(this.gui.getInterpolatedProperty(StatueProperty.ROTATION_X, partialTicks), 1.0F, 0.0F, 0.0F);
             GlStateManager.rotate(this.gui.getInterpolatedProperty(StatueProperty.ROTATION_Y, partialTicks), 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(this.gui.getInterpolatedProperty(StatueProperty.ROTATION_X, partialTicks), 1.0F, 0.0F, 0.0F);
             GlStateManager.rotate(this.gui.getInterpolatedProperty(StatueProperty.ROTATION_Z, partialTicks), 0.0F, 0.0F, 1.0F);
             GlStateManager.scale(this.gui.getInterpolatedProperty(StatueProperty.SCALE_X , partialTicks), this.gui.getInterpolatedProperty(StatueProperty.SCALE_Y, partialTicks), this.gui.getInterpolatedProperty(StatueProperty.SCALE_Z, partialTicks));
             GlStateManager.translate(0.0F, -1.5F, 0.0F);

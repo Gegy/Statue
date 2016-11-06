@@ -9,15 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProviderHandler {
+    public static final QubbleModelProvider QUBBLE_MODEL_PROVIDER = new QubbleModelProvider();
+    public static final QubbleTextureProvider QUBBLE_TEXTURE_PROVIDER = new QubbleTextureProvider();
+
+    public static final TabulaModelProvider TABULA_MODEL_PROVIDER = new TabulaModelProvider();
+    public static final TabulaTextureProvider TABULA_TEXTURE_PROVIDER = new TabulaTextureProvider();
+
     private static final List<ModelProvider<?>> MODEL_PROVIDERS = new ArrayList<>();
     private static final List<TextureProvider<?>> TEXTURE_PROVIDERS = new ArrayList<>();
 
     public static void onPreInit() {
-        ProviderHandler.register(new QubbleModelProvider());
-        ProviderHandler.register(new QubbleTextureProvider());
+        ProviderHandler.register(QUBBLE_MODEL_PROVIDER);
+        ProviderHandler.register(QUBBLE_TEXTURE_PROVIDER);
 
-        ProviderHandler.register(new TabulaModelProvider());
-        ProviderHandler.register(new TabulaTextureProvider());
+        ProviderHandler.register(TABULA_MODEL_PROVIDER);
+        ProviderHandler.register(TABULA_TEXTURE_PROVIDER);
     }
 
     public static void register(ModelProvider<?> provider) {

@@ -5,6 +5,7 @@ import net.gegy1000.statue.server.api.ModelProvider;
 import net.gegy1000.statue.server.api.ProviderHandler;
 import net.gegy1000.statue.server.api.StatueModel;
 import net.gegy1000.statue.server.api.StatueTexture;
+import net.gegy1000.statue.server.api.TextureProvider;
 import net.gegy1000.statue.server.block.entity.StatueBlockEntity;
 import net.gegy1000.statue.server.block.entity.StatueProperty;
 import net.ilexiconn.llibrary.LLibrary;
@@ -17,10 +18,12 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +41,9 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
     private StatueModel selectedModel;
     private ModelBase selectedRenderModel;
 
+    private TextureProvider<?> textureProvider;
+    private StatueTexture texture;
+
     private StatueBlockEntity entity;
 
     private StatueModelGUI parent;
@@ -51,6 +57,13 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
     protected void initElements() {
         this.selectedModel = null;
         this.selectedProvider = null;
+
+        if (this.texture != null) {
+            this.texture.delete(this.mc.theWorld);
+        }
+
+        this.textureProvider = null;
+        this.texture = null;
 
         this.clearElements();
 
@@ -84,7 +97,7 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
         this.addElement(new ButtonElement<>(this, "Select", this.width - 50, this.height - 18, 50, 18, (button) -> {
             if (this.selectedModel != null) {
                 this.entity.set(this.selectedProvider, this.selectedModel);
-                this.entity.setTexture(null, null);
+                this.entity.setTexture(this.textureProvider, this.texture);
                 this.mc.displayGuiScreen(this.parent);
                 return true;
             }
@@ -113,10 +126,25 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
         }
 
         this.addElement(this.modelList = new ListElement<>(this, 90.0F, 14.0F, 85, this.height - 32, this.modelNames, (list) -> {
-            StatueModel model = this.selectedProvider.getModel(this.models.get(list.getSelectedEntry()), list.getSelectedEntry());
+            String name = list.getSelectedEntry();
+            File file = this.models.get(name);
+            StatueModel model = this.selectedProvider.getModel(file, name);
             if (model != null) {
                 this.selectedModel = model;
                 this.selectedRenderModel = model.create();
+                Tuple<BufferedImage, TextureProvider<?>> modelTexture = this.selectedProvider.getTexture(file, name);
+                if (modelTexture != null) {
+                    BufferedImage image = modelTexture.getFirst();
+                    TextureProvider<?> provider = modelTexture.getSecond();
+                    this.texture = provider.create(image, name);
+                    this.textureProvider = provider;
+                } else {
+                    if (this.texture != null) {
+                        this.texture.delete(this.mc.theWorld);
+                    }
+                    this.textureProvider = null;
+                    this.texture = null;
+                }
                 return true;
             }
             return false;
@@ -170,12 +198,12 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
 
     @Override
     public StatueTexture getSelectedTexture() {
-        return null;
+        return this.texture;
     }
 
     @Override
     public ResourceLocation getSelectedRenderTexture() {
-        return null;
+        return this.texture != null ? this.texture.get(this.mc.theWorld) : null;
     }
 
     @Override

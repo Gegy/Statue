@@ -2,12 +2,17 @@ package net.gegy1000.statue.server.provider.tabula;
 
 import io.netty.buffer.ByteBuf;
 import net.gegy1000.statue.server.api.ModelProvider;
+import net.gegy1000.statue.server.api.ProviderHandler;
+import net.gegy1000.statue.server.api.TextureProvider;
 import net.ilexiconn.llibrary.client.model.tabula.TabulaModelHandler;
 import net.ilexiconn.llibrary.client.model.tabula.container.TabulaCubeContainer;
 import net.ilexiconn.llibrary.client.model.tabula.container.TabulaCubeGroupContainer;
 import net.ilexiconn.llibrary.client.model.tabula.container.TabulaModelContainer;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -51,6 +56,27 @@ public class TabulaModelProvider implements ModelProvider<StatueTabulaModel> {
             zip.close();
         } catch (Exception e) {
             System.err.println("Failed to load Tabula model: \"" + file.getName() + "\"");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public Tuple<BufferedImage, TextureProvider<?>> getTexture(File file, String name) {
+        try {
+            ZipFile zip = new ZipFile(file);
+            Enumeration<? extends ZipEntry> entries = zip.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (entry.getName().equals("texture.png")) {
+                    BufferedImage image = ImageIO.read(zip.getInputStream(entry));
+                    zip.close();
+                    return new Tuple<>(image, ProviderHandler.TABULA_TEXTURE_PROVIDER);
+                }
+            }
+            zip.close();
+        } catch (Exception e) {
+            System.err.println("Failed to load Tabula model texture: \"" + file.getName() + "\"");
             e.printStackTrace();
         }
         return null;

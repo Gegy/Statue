@@ -2,12 +2,15 @@ package net.gegy1000.statue.server.provider.qubble;
 
 import io.netty.buffer.ByteBuf;
 import net.gegy1000.statue.server.api.ModelProvider;
+import net.gegy1000.statue.server.api.TextureProvider;
 import net.ilexiconn.llibrary.client.model.qubble.QubbleCuboid;
 import net.ilexiconn.llibrary.client.model.qubble.QubbleModel;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,6 +49,11 @@ public class QubbleModelProvider implements ModelProvider<StatueQubbleModel> {
             System.err.println("Failed to load Qubble model: \"" + file.getName() + "\"");
             e.printStackTrace();
         }
+        return null;
+    }
+
+    @Override
+    public Tuple<BufferedImage, TextureProvider<?>> getTexture(File file, String name) {
         return null;
     }
 

@@ -48,6 +48,7 @@ public class ClientEventHandler {
                         GlStateManager.disableBlend();
                         GlStateManager.enableRescaleNormal();
                         GlStateManager.disableCull();
+                        GlStateManager.enableAlpha();
                         RenderHelper.enableStandardItemLighting();
                         int light = player.worldObj.getCombinedLight(tile.getPos(), 0);
                         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light % 65536, light >> 16);
@@ -66,8 +67,8 @@ public class ClientEventHandler {
                         double scale = 1.0;
                         GlStateManager.scale(-scale, -scale, scale);
                         GlStateManager.translate(entity.getInterpolatedProperty(StatueProperty.OFFSET_X, partialTicks), entity.getInterpolatedProperty(StatueProperty.OFFSET_Y, partialTicks), entity.getInterpolatedProperty(StatueProperty.OFFSET_Z, partialTicks));
-                        GlStateManager.rotate(entity.getInterpolatedProperty(StatueProperty.ROTATION_X, partialTicks), 1.0F, 0.0F, 0.0F);
                         GlStateManager.rotate(entity.getInterpolatedProperty(StatueProperty.ROTATION_Y, partialTicks), 0.0F, 1.0F, 0.0F);
+                        GlStateManager.rotate(entity.getInterpolatedProperty(StatueProperty.ROTATION_X, partialTicks), 1.0F, 0.0F, 0.0F);
                         GlStateManager.rotate(entity.getInterpolatedProperty(StatueProperty.ROTATION_Z, partialTicks), 0.0F, 0.0F, 1.0F);
                         GlStateManager.scale(entity.getInterpolatedProperty(StatueProperty.SCALE_X, partialTicks), entity.getInterpolatedProperty(StatueProperty.SCALE_Y, partialTicks), entity.getInterpolatedProperty(StatueProperty.SCALE_Z, partialTicks));
                         GlStateManager.translate(0.0F, -1.5F, 0.0F);
@@ -87,6 +88,7 @@ public class ClientEventHandler {
                         event.setCanceled(true);
                         ClientProxy.MINECRAFT.entityRenderer.disableLightmap();
                         GlStateManager.popMatrix();
+                        GlStateManager.disableAlpha();
                         GlStateManager.disableRescaleNormal();
                     }
                 }
