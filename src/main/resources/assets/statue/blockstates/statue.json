@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "statue:statue"
+    },
+    "facing=south": {
+      "model": "statue:statue"
+    },
+    "facing=west": {
+      "model": "statue:statue"
+    },
+    "facing=east": {
+      "model": "statue:statue"
+    }
+  }
+}
