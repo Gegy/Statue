@@ -15,6 +15,7 @@ import net.ilexiconn.llibrary.client.gui.element.LabelElement;
 import net.ilexiconn.llibrary.client.gui.element.PropertyInputElement;
 import net.ilexiconn.llibrary.client.gui.element.SliderElement;
 import net.ilexiconn.llibrary.client.gui.element.StateButtonElement;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -23,6 +24,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -112,6 +114,22 @@ public class StatueModelGUI extends BackgroundElementGUI implements ModelViewGUI
 
         this.addElement(new LabelElement<>(this, "Locked", 3.0F, 140.0F));
         this.addElement(new CheckboxElement<>(this, 3.0F, 150.0F, this.propertyLocked).setEnabled(this.entity.canInteract(this.mc.thePlayer, true)));
+
+        if (Loader.isModLoaded("qubble")) {
+            this.addElement(new ButtonElement<>(this, "Qubble", this.width - 50.0F, 0.0F, 50, 14, button -> {
+                try {
+                    Class<?> guiClass = Class.forName("net.ilexiconn.qubble.client.gui.QubbleGUI");
+                    Object gui = guiClass.getDeclaredConstructor(GuiScreen.class).newInstance(this);
+                    if (gui instanceof GuiScreen) {
+                        this.mc.displayGuiScreen((GuiScreen) gui);
+                        return true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }));
+        }
     }
 
     @Override
