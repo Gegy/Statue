@@ -212,15 +212,15 @@ public class TabulaModelProvider implements ModelProvider<StatueTabulaModel> {
     }
 
     protected List<File> getModelFiles() {
-        List<File> list = new ArrayList<>();
-        try {
-            for (File modelFile : MODEL_DIRECTORY.listFiles()) {
+        List<File> modelFiles = new ArrayList<>();
+        File[] files = MODEL_DIRECTORY.listFiles();
+        if (files != null) {
+            for (File modelFile : files) {
                 if (modelFile.isFile() && modelFile.getName().endsWith(".tbl")) {
-                    list.add(modelFile);
+                    modelFiles.add(modelFile);
                 }
             }
-        } catch (Exception e) {
         }
-        return list;
+        return modelFiles;
     }
 }

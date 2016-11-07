@@ -52,12 +52,15 @@ public class QubbleTextureProvider implements TextureProvider<DefaultStatueTextu
     }
 
     protected List<File> getTextureFiles() {
-        List<File> list = new ArrayList<>();
-        for (File modelFile : TEXTURE_DIRECTORY.listFiles()) {
-            if (modelFile.isFile() && modelFile.getName().endsWith(".png")) {
-                list.add(modelFile);
+        List<File> textureFiles = new ArrayList<>();
+        File[] files = TEXTURE_DIRECTORY.listFiles();
+        if (files != null) {
+            for (File modelFile : files) {
+                if (modelFile.isFile() && modelFile.getName().endsWith(".png")) {
+                    textureFiles.add(modelFile);
+                }
             }
         }
-        return list;
+        return textureFiles;
     }
 }
