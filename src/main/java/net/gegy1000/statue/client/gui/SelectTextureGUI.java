@@ -1,6 +1,7 @@
 package net.gegy1000.statue.client.gui;
 
 import net.gegy1000.statue.client.gui.element.ModelViewElement;
+import net.gegy1000.statue.server.api.ImportFile;
 import net.gegy1000.statue.server.api.ProviderHandler;
 import net.gegy1000.statue.server.api.StatueModel;
 import net.gegy1000.statue.server.api.StatueTexture;
@@ -29,12 +30,12 @@ import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class SelectTextureGUI extends ElementGUI implements ModelViewGUI {
-    private Map<String, File> textures = new HashMap<>();
+    private Map<String, ImportFile> textures = new HashMap<>();
     private List<String> textureNames = new ArrayList<>();
 
     private ListElement<SelectTextureGUI> textureList;
 
-    private TextureProvider<?> selectedProvider;
+    private TextureProvider<?, ?> selectedProvider;
     private StatueTexture selectedTexture;
     private ResourceLocation selectedRenderTexture;
 
@@ -60,7 +61,7 @@ public class SelectTextureGUI extends ElementGUI implements ModelViewGUI {
 
         List<String> providers = new ArrayList<>();
 
-        for (TextureProvider<?> provider : ProviderHandler.getTextureProviders()) {
+        for (TextureProvider<?, ?> provider : ProviderHandler.getTextureProviders()) {
             String name = provider.getName();
             providers.add(name);
         }
@@ -71,7 +72,7 @@ public class SelectTextureGUI extends ElementGUI implements ModelViewGUI {
         this.addElement(new ModelViewElement<>(this, (this.width - 175.0F) / 2 - width / 2 + 175.0F, (this.height - 32) / 2 - height / 2 + 14, width, height));
 
         this.addElement(new ListElement<>(this, 0.0F, 14.0F, 85, this.height - 32, providers, (list) -> {
-            TextureProvider<?> provider = ProviderHandler.getTexture(list.getSelectedIndex());
+            TextureProvider<?, ?> provider = ProviderHandler.getTexture(list.getSelectedIndex());
             if (provider != null) {
                 this.selectedProvider = provider;
                 this.createModelList();
@@ -99,8 +100,8 @@ public class SelectTextureGUI extends ElementGUI implements ModelViewGUI {
         this.textureNames.clear();
 
         if (this.selectedProvider != null) {
-            Map<String, File> textures = this.selectedProvider.getTextures();
-            for (Map.Entry<String, File> texture : textures.entrySet()) {
+            Map<String, ? extends ImportFile> textures = this.selectedProvider.getTextures();
+            for (Map.Entry<String, ? extends ImportFile> texture : textures.entrySet()) {
                 String name = texture.getKey();
                 this.textures.put(name, texture.getValue());
                 this.textureNames.add(name);
@@ -113,7 +114,7 @@ public class SelectTextureGUI extends ElementGUI implements ModelViewGUI {
         }
 
         this.addElement(this.textureList = new ListElement<>(this, 90.0F, 14.0F, 85, this.height - 32, this.textureNames, (list) -> {
-            StatueTexture texture = this.selectedProvider.getTexture(this.textures.get(list.getSelectedEntry()));
+            StatueTexture texture = this.selectedProvider.getTextureBase(this.textures.get(list.getSelectedEntry()));
             if (texture != null) {
                 if (this.selectedTexture != null) {
                     this.selectedTexture.delete(this.entity.getWorld());

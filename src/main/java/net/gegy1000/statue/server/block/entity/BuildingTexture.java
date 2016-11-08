@@ -9,7 +9,7 @@ public class BuildingTexture {
 
     private int id;
     private String name;
-    private TextureProvider<?> provider;
+    private TextureProvider<?, ?> provider;
     private int width;
     private int height;
     private int[] texture;
@@ -17,7 +17,7 @@ public class BuildingTexture {
     private int total;
     private int count;
 
-    public BuildingTexture(int id, String name, TextureProvider<?> provider, int width, int height, int count) {
+    public BuildingTexture(int id, String name, TextureProvider<?, ?> provider, int width, int height, int count) {
         this.id = id;
         this.name = name;
         this.provider = provider;

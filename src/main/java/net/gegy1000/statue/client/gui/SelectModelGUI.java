@@ -1,6 +1,7 @@
 package net.gegy1000.statue.client.gui;
 
 import net.gegy1000.statue.client.gui.element.ModelViewElement;
+import net.gegy1000.statue.server.api.ImportFile;
 import net.gegy1000.statue.server.api.ModelProvider;
 import net.gegy1000.statue.server.api.ProviderHandler;
 import net.gegy1000.statue.server.api.StatueModel;
@@ -24,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,16 +32,16 @@ import java.util.Map;
 
 @SideOnly(Side.CLIENT)
 public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
-    private Map<String, File> models = new HashMap<>();
+    private Map<String, ImportFile> models = new HashMap<>();
     private List<String> modelNames = new ArrayList<>();
 
     private ListElement<SelectModelGUI> modelList;
 
-    private ModelProvider<?> selectedProvider;
+    private ModelProvider<?, ? extends ImportFile> selectedProvider;
     private StatueModel selectedModel;
     private ModelBase selectedRenderModel;
 
-    private TextureProvider<?> textureProvider;
+    private TextureProvider<?, ? extends ImportFile> textureProvider;
     private StatueTexture texture;
 
     private StatueBlockEntity entity;
@@ -69,7 +69,7 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
 
         List<String> providers = new ArrayList<>();
 
-        for (ModelProvider<?> provider : ProviderHandler.getModelProviders()) {
+        for (ModelProvider<?, ? extends ImportFile> provider : ProviderHandler.getModelProviders()) {
             String name = provider.getName();
             providers.add(name);
         }
@@ -80,7 +80,7 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
         this.addElement(new ModelViewElement<>(this, (this.width - 175.0F) / 2 - width / 2 + 175.0F, (this.height - 32) / 2 - height / 2 + 14, width, height));
 
         this.addElement(new ListElement<>(this, 0.0F, 14.0F, 85, this.height - 32, providers, (list) -> {
-            ModelProvider<?> provider = ProviderHandler.get(list.getSelectedIndex());
+            ModelProvider<?, ? extends ImportFile> provider = ProviderHandler.get(list.getSelectedIndex());
             if (provider != null) {
                 this.selectedProvider = provider;
                 this.createModelList();
@@ -112,8 +112,8 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
         this.modelNames.clear();
 
         if (this.selectedProvider != null) {
-            Map<String, File> models = this.selectedProvider.getModels();
-            for (Map.Entry<String, File> model : models.entrySet()) {
+            Map<String, ? extends ImportFile> models = this.selectedProvider.getModels();
+            for (Map.Entry<String, ? extends ImportFile> model : models.entrySet()) {
                 String name = model.getKey();
                 this.models.put(name, model.getValue());
                 this.modelNames.add(name);
@@ -127,15 +127,15 @@ public class SelectModelGUI extends ElementGUI implements ModelViewGUI {
 
         this.addElement(this.modelList = new ListElement<>(this, 90.0F, 14.0F, 85, this.height - 32, this.modelNames, (list) -> {
             String name = list.getSelectedEntry();
-            File file = this.models.get(name);
-            StatueModel model = this.selectedProvider.getModel(file, name);
+            ImportFile file = this.models.get(name);
+            StatueModel model = this.selectedProvider.getModelBase(file, name);
             if (model != null) {
                 this.selectedModel = model;
                 this.selectedRenderModel = model.create();
-                Tuple<BufferedImage, TextureProvider<?>> modelTexture = this.selectedProvider.getTexture(file, name);
+                Tuple<BufferedImage, TextureProvider<?, ?>> modelTexture = this.selectedProvider.getTextureBase(file, name);
                 if (modelTexture != null) {
                     BufferedImage image = modelTexture.getFirst();
-                    TextureProvider<?> provider = modelTexture.getSecond();
+                    TextureProvider<?, ?> provider = modelTexture.getSecond();
                     this.texture = provider.create(image, name);
                     this.textureProvider = provider;
                 } else {

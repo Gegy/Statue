@@ -1,60 +1,50 @@
-package net.gegy1000.statue.server.provider.qubble;
+package net.gegy1000.statue.server.provider.game;
 
 import io.netty.buffer.ByteBuf;
-import net.gegy1000.statue.server.api.ImportableFile;
+import net.gegy1000.statue.client.model.game.GameModelLoader;
 import net.gegy1000.statue.server.api.ModelProvider;
+import net.gegy1000.statue.server.api.ProviderHandler;
 import net.gegy1000.statue.server.api.TextureProvider;
+import net.gegy1000.statue.server.provider.qubble.StatueQubbleModel;
 import net.ilexiconn.llibrary.client.model.qubble.QubbleCuboid;
 import net.ilexiconn.llibrary.client.model.qubble.QubbleModel;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class QubbleModelProvider implements ModelProvider<StatueQubbleModel, ImportableFile> {
-    public static final File QUBBLE_DIRECTORY = new File(".", "llibrary" + File.separator + "qubble");
-    public static final File MODEL_DIRECTORY = new File(QUBBLE_DIRECTORY, "models");
-
+public class GameModelProvider implements ModelProvider<StatueQubbleModel, GameModelReference> {
     @Override
-    public Map<String, ImportableFile> getModels() {
-        Map<String, ImportableFile> models = new HashMap<>();
-        List<File> modelFiles = this.getModelFiles();
-        for (File modelFile : modelFiles) {
-            String name = modelFile.getName();
-            if (name.contains(".")) {
-                name = name.split("\\.")[0];
-            }
-            models.put(name, new ImportableFile(modelFile));
+    public Map<String, GameModelReference> getModels() {
+        Map<String, GameModelReference> models = new HashMap<>();
+        Map<String, QubbleModel> gameModels = GameModelLoader.INSTANCE.getModels();
+        Map<String, ResourceLocation> textures = GameModelLoader.INSTANCE.getTextures();
+        for (Map.Entry<String, QubbleModel> entry : gameModels.entrySet()) {
+            String name = entry.getKey();
+            models.put(name, new GameModelReference(name, entry.getValue(), textures.get(name)));
         }
         return models;
     }
 
     @Override
-    public StatueQubbleModel getModel(ImportableFile file, String name) {
-        try {
-            DataInputStream in = new DataInputStream(new FileInputStream(file.get()));
-            NBTTagCompound compound = CompressedStreamTools.readCompressed(in);
-            in.close();
-            QubbleModel model = QubbleModel.deserialize(compound);
-            return new StatueQubbleModel(model);
-        } catch (Exception e) {
-            System.err.println("Failed to load Qubble model: \"" + file.getName() + "\"");
-            e.printStackTrace();
-        }
-        return null;
+    public StatueQubbleModel getModel(GameModelReference reference, String name) {
+        return new StatueQubbleModel(reference.getModel());
     }
 
     @Override
-    public Tuple<BufferedImage, TextureProvider<?, ?>> getTexture(ImportableFile file, String name) {
+    public Tuple<BufferedImage, TextureProvider<?, ?>> getTexture(GameModelReference model, String name) {
+        try {
+            ResourceLocation texture = model.getTexture();
+            BufferedImage image = ImageIO.read(GameModelLoader.class.getResourceAsStream("/assets/" + texture.getResourceDomain() + "/" + texture.getResourcePath()));
+            return new Tuple<>(image, ProviderHandler.GAME_TEXTURE_PROVIDER);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
@@ -99,7 +89,7 @@ public class QubbleModelProvider implements ModelProvider<StatueQubbleModel, Imp
 
     @Override
     public String getName() {
-        return "Qubble";
+        return "Game";
     }
 
     private void serializeCuboid(ByteBuf buf, QubbleCuboid cuboid) {
@@ -170,18 +160,5 @@ public class QubbleModelProvider implements ModelProvider<StatueQubbleModel, Imp
         }
 
         return cuboid;
-    }
-
-    protected List<File> getModelFiles() {
-        List<File> modelFiles = new ArrayList<>();
-        File[] files = MODEL_DIRECTORY.listFiles();
-        if (files != null) {
-            for (File modelFile : files) {
-                if (modelFile.isFile() && modelFile.getName().endsWith(".qbl")) {
-                    modelFiles.add(modelFile);
-                }
-            }
-        }
-        return modelFiles;
     }
 }

@@ -1,5 +1,6 @@
 package net.gegy1000.statue.server.provider.tabula;
 
+import net.gegy1000.statue.server.api.ImportableFile;
 import net.gegy1000.statue.server.api.TextureProvider;
 import net.gegy1000.statue.server.provider.DefaultStatueTexture;
 
@@ -11,28 +12,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TabulaTextureProvider implements TextureProvider<DefaultStatueTexture> {
+public class TabulaTextureProvider implements TextureProvider<DefaultStatueTexture, ImportableFile> {
     public static final File TABULA_DIRECTORY = new File(".", "mods" + File.separator + "tabula");
     public static final File TEXTURE_DIRECTORY = new File(TABULA_DIRECTORY, "textures");
 
     @Override
-    public Map<String, File> getTextures() {
-        Map<String, File> textures = new HashMap<>();
+    public Map<String, ImportableFile> getTextures() {
+        Map<String, ImportableFile> textures = new HashMap<>();
         List<File> textureFiles = this.getTextureFiles();
         for (File textureFile : textureFiles) {
             String name = textureFile.getName();
             if (name.contains(".")) {
                 name = name.split("\\.")[0];
             }
-            textures.put(name, textureFile);
+            textures.put(name, new ImportableFile(textureFile));
         }
         return textures;
     }
 
     @Override
-    public DefaultStatueTexture getTexture(File file) {
+    public DefaultStatueTexture getTexture(ImportableFile file) {
         try {
-            BufferedImage image = ImageIO.read(file);
+            BufferedImage image = ImageIO.read(file.get());
             return new DefaultStatueTexture(image, file.getName());
         } catch (Exception e) {
             System.err.println("Failed to load Tabula texture: \"" + file.getName() + "\"");

@@ -1,6 +1,7 @@
 package net.gegy1000.statue.client;
 
 import net.gegy1000.statue.client.gui.StatueModelGUI;
+import net.gegy1000.statue.client.model.game.GameModelLoader;
 import net.gegy1000.statue.client.render.RenderRegistry;
 import net.gegy1000.statue.server.ServerProxy;
 import net.minecraft.client.Minecraft;
@@ -26,6 +27,7 @@ public class ClientProxy extends ServerProxy {
     @Override
     public void onPostInit() {
         super.onPostInit();
+        GameModelLoader.INSTANCE.load();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package net.gegy1000.statue.server.provider.tabula;
 
 import io.netty.buffer.ByteBuf;
+import net.gegy1000.statue.server.api.ImportableFile;
 import net.gegy1000.statue.server.api.ModelProvider;
 import net.gegy1000.statue.server.api.ProviderHandler;
 import net.gegy1000.statue.server.api.TextureProvider;
@@ -22,28 +23,28 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class TabulaModelProvider implements ModelProvider<StatueTabulaModel> {
+public class TabulaModelProvider implements ModelProvider<StatueTabulaModel, ImportableFile> {
     public static final File TABULA_DIRECTORY = new File(".", "mods" + File.separator + "tabula");
     public static final File MODEL_DIRECTORY = new File(TABULA_DIRECTORY, "saves");
 
     @Override
-    public Map<String, File> getModels() {
-        Map<String, File> models = new HashMap<>();
+    public Map<String, ImportableFile> getModels() {
+        Map<String, ImportableFile> models = new HashMap<>();
         List<File> modelFiles = this.getModelFiles();
         for (File modelFile : modelFiles) {
             String name = modelFile.getName();
             if (name.contains(".")) {
                 name = name.split("\\.")[0];
             }
-            models.put(name, modelFile);
+            models.put(name, new ImportableFile(modelFile));
         }
         return models;
     }
 
     @Override
-    public StatueTabulaModel getModel(File file, String name) {
+    public StatueTabulaModel getModel(ImportableFile file, String name) {
         try {
-            ZipFile zip = new ZipFile(file);
+            ZipFile zip = new ZipFile(file.get());
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
@@ -62,9 +63,9 @@ public class TabulaModelProvider implements ModelProvider<StatueTabulaModel> {
     }
 
     @Override
-    public Tuple<BufferedImage, TextureProvider<?>> getTexture(File file, String name) {
+    public Tuple<BufferedImage, TextureProvider<?, ?>> getTexture(ImportableFile file, String name) {
         try {
-            ZipFile zip = new ZipFile(file);
+            ZipFile zip = new ZipFile(file.get());
             Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();

@@ -3,6 +3,7 @@ package net.gegy1000.statue.server.block.entity;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import net.gegy1000.statue.Statue;
+import net.gegy1000.statue.server.api.ImportFile;
 import net.gegy1000.statue.server.api.ModelProvider;
 import net.gegy1000.statue.server.api.ProviderHandler;
 import net.gegy1000.statue.server.api.StatueModel;
@@ -203,7 +204,7 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
 
     private void readSyncData(NBTTagCompound compound) {
         if (compound.hasKey("ModelProvider") && compound.hasKey("ModelData")) {
-            ModelProvider<?> provider = ProviderHandler.get(compound.getByte("ModelProvider"));
+            ModelProvider<?, ? extends ImportFile> provider = ProviderHandler.get(compound.getByte("ModelProvider"));
             byte[] data = compound.getByteArray("ModelData");
             ByteBuf modelData = new UnpooledByteBufAllocator(false).buffer(data.length).writeBytes(data);
             StatueModel model = provider.deserialize(modelData);
@@ -272,7 +273,7 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
         }
     }
 
-    public void setTexture(TextureProvider<?> provider, StatueTexture texture) {
+    public void setTexture(TextureProvider<?, ?> provider, StatueTexture texture) {
         if (this.worldObj.isRemote) {
             if (texture == null || provider == null) {
                 this.queuedMessages.add(new RemoveTextureMessage(this.pos));
@@ -283,7 +284,7 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
         this.loadTexture(provider, texture);
     }
 
-    private List<IMessage> createTextureMessages(TextureProvider<?> provider, StatueTexture texture) {
+    private List<IMessage> createTextureMessages(TextureProvider<?, ?> provider, StatueTexture texture) {
         List<IMessage> messages = new ArrayList<>();
         int width = texture.getWidth();
         int height = texture.getHeight();
@@ -313,7 +314,7 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
         return messages;
     }
 
-    public void startBuilding(int id, String name, TextureProvider<?> provider, int width, int height, int count) {
+    public void startBuilding(int id, String name, TextureProvider<?, ?> provider, int width, int height, int count) {
         this.buildingTexture = new BuildingTexture(id, name, provider, width, height, count);
     }
 
