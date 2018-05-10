@@ -36,12 +36,12 @@ public class TextureSectionMessage extends AbstractMessage<TextureSectionMessage
 
     @Override
     public void onClientReceived(Minecraft client, TextureSectionMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     @Override
     public void onServerReceived(MinecraftServer server, TextureSectionMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     protected void handle(World world, EntityPlayer player, TextureSectionMessage message, MessageContext context) {

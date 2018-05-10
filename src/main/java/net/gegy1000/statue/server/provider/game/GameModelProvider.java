@@ -8,12 +8,15 @@ import net.gegy1000.statue.server.api.TextureProvider;
 import net.gegy1000.statue.server.provider.qubble.StatueQubbleModel;
 import net.ilexiconn.llibrary.client.model.qubble.QubbleCuboid;
 import net.ilexiconn.llibrary.client.model.qubble.QubbleModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +43,8 @@ public class GameModelProvider implements ModelProvider<StatueQubbleModel, GameM
     public Tuple<BufferedImage, TextureProvider<?, ?>> getTexture(GameModelReference model, String name) {
         try {
             ResourceLocation texture = model.getTexture();
-            BufferedImage image = ImageIO.read(GameModelLoader.class.getResourceAsStream("/assets/" + texture.getResourceDomain() + "/" + texture.getResourcePath()));
+            InputStream input = Minecraft.getMinecraft().getResourceManager().getResource(texture).getInputStream();
+            BufferedImage image = ImageIO.read(new BufferedInputStream(input));
             return new Tuple<>(image, ProviderHandler.GAME_TEXTURE_PROVIDER);
         } catch (Exception e) {
             e.printStackTrace();

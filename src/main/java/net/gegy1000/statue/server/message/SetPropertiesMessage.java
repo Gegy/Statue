@@ -29,12 +29,12 @@ public class SetPropertiesMessage extends AbstractMessage<SetPropertiesMessage> 
 
     @Override
     public void onClientReceived(Minecraft client, SetPropertiesMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     @Override
     public void onServerReceived(MinecraftServer server, SetPropertiesMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     protected void handle(World world, EntityPlayer player, SetPropertiesMessage message, MessageContext context) {

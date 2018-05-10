@@ -1,0 +1,14 @@
+{
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "o-o",
+    "-*-",
+    "o-o"
+  ],
+  "key": {
+    "o": {"item": "minecraft:quartz_block", "data": 32767},
+    "-": {"item": "minecraft:iron_ingot"},
+    "*": {"item": "minecraft:glowstone"}
+  },
+  "result": {"item": "statue:statue"}
+}

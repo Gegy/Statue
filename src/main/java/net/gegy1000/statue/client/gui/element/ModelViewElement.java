@@ -9,10 +9,10 @@ import net.ilexiconn.llibrary.client.gui.element.IElementGUI;
 import net.ilexiconn.llibrary.client.util.ClientUtils;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -139,12 +139,12 @@ public class ModelViewElement<T extends IElementGUI & ModelViewGUI> extends Elem
             GlStateManager.disableLighting();
             GlStateManager.depthMask(false);
             Tessellator tessellator = Tessellator.getInstance();
-            VertexBuffer buffer = tessellator.getBuffer();
-            this.drawGrid(tessellator, buffer, 0.25F);
-            this.drawGrid(tessellator, buffer, 0.5F);
-            this.drawGrid(tessellator, buffer, 1.0F);
-            this.drawGrid(tessellator, buffer, 2.0F);
-            this.drawGrid(tessellator, buffer, 4.0F);
+            BufferBuilder builder = tessellator.getBuffer();
+            this.drawGrid(tessellator, builder, 0.25F);
+            this.drawGrid(tessellator, builder, 0.5F);
+            this.drawGrid(tessellator, builder, 1.0F);
+            this.drawGrid(tessellator, builder, 2.0F);
+            this.drawGrid(tessellator, builder, 4.0F);
             GlStateManager.depthMask(true);
             GlStateManager.popMatrix();
         }
@@ -161,7 +161,7 @@ public class ModelViewElement<T extends IElementGUI & ModelViewGUI> extends Elem
         GlStateManager.disableBlend();
     }
 
-    private void drawGrid(Tessellator tessellator, VertexBuffer buffer, float size) {
+    private void drawGrid(Tessellator tessellator, BufferBuilder builder, float size) {
         float scale = size / 4.0F;
         float lineWidth = Math.min(1.25F, 16.0F * (this.zoom / 4.0F) * (scale / 2.0F));
         GlStateManager.glLineWidth(lineWidth);
@@ -173,15 +173,15 @@ public class ModelViewElement<T extends IElementGUI & ModelViewGUI> extends Elem
         float b = (float) (color & 255) / 255.0F;
         float a = Math.max(0.0F, Math.min(1.0F, lineWidth - 0.35F));
         for (float x = -size; x < size + scale; x += scale) {
-            buffer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-            buffer.pos(x, gridY, -size).color(r, g, b, a).endVertex();
-            buffer.pos(x, gridY, size).color(r, g, b, a).endVertex();
+            builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+            builder.pos(x, gridY, -size).color(r, g, b, a).endVertex();
+            builder.pos(x, gridY, size).color(r, g, b, a).endVertex();
             tessellator.draw();
         }
         for (float z = -size; z < size + scale; z += scale) {
-            buffer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-            buffer.pos(-size, gridY, z).color(r, g, b, a).endVertex();
-            buffer.pos(size, gridY, z).color(r, g, b, a).endVertex();
+            builder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+            builder.pos(-size, gridY, z).color(r, g, b, a).endVertex();
+            builder.pos(size, gridY, z).color(r, g, b, a).endVertex();
             tessellator.draw();
         }
     }

@@ -71,7 +71,7 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (this.worldObj.isRemote) {
+        if (this.world.isRemote) {
             this.prevProperties = new HashMap<>(this.properties);
         }
         this.tick++;
@@ -82,7 +82,7 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
                 break;
             }
         }
-        if (!this.worldObj.isRemote) {
+        if (!this.world.isRemote) {
             for (int i = 0; i < 32; i++) {
                 if (!this.queuedPlayerMessages.isEmpty()) {
                     Tuple<IMessage, EntityPlayerMP> message = this.queuedPlayerMessages.poll();
@@ -97,12 +97,12 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
             this.buildingTexture = null;
         }
         if (this.tick % INTERP_TICKS == 0) {
-            if (this.propertiesDirty && this.worldObj.isRemote) {
+            if (this.propertiesDirty && this.world.isRemote) {
                 this.propertiesDirty = false;
                 this.send(new SetPropertiesMessage(this.pos, this.properties));
             }
         }
-        if (this.worldObj.isRemote) {
+        if (this.world.isRemote) {
             if (this.interpTick > 0) {
                 this.interpTick--;
                 boolean dirty = this.propertiesDirty;
@@ -121,8 +121,8 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
     }
 
     public void delete() {
-        if (this.worldObj.isRemote && this.statueTexture != null) {
-            this.statueTexture.delete(this.worldObj);
+        if (this.world.isRemote && this.statueTexture != null) {
+            this.statueTexture.delete(this.world);
         }
     }
 
@@ -231,7 +231,7 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
 
     public void setOwner(UUID owner) {
         this.owner = owner;
-        if (!this.worldObj.isRemote) {
+        if (!this.world.isRemote) {
             this.markDirty();
         }
     }
@@ -239,11 +239,11 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
     public void load(ModelProvider provider, StatueModel model) {
         this.provider = provider;
         this.statueModel = model;
-        if (model != null && this.worldObj != null && this.worldObj.isRemote) {
+        if (model != null && this.world != null && this.world.isRemote) {
             this.create(model);
         }
         this.properties.clear();
-        if (this.worldObj != null && !this.worldObj.isRemote) {
+        if (this.world != null && !this.world.isRemote) {
             this.markDirty();
         }
     }
@@ -254,27 +254,27 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
 
     public void loadTexture(TextureProvider provider, StatueTexture texture) {
         if (this.statueTexture != null && this.statueTexture != texture) {
-            this.statueTexture.delete(this.worldObj);
+            this.statueTexture.delete(this.world);
         }
         this.textureProvider = provider;
         this.statueTexture = texture;
         if (texture != null) {
-            this.texture = texture.get(this.worldObj);
+            this.texture = texture.get(this.world);
         }
-        if (this.worldObj != null && !this.worldObj.isRemote) {
+        if (this.world != null && !this.world.isRemote) {
             this.markDirty();
         }
     }
 
     public void set(ModelProvider provider, StatueModel model) {
         this.load(provider, model);
-        if (this.worldObj.isRemote) {
+        if (this.world.isRemote) {
             this.queuedMessages.add(new SetModelMessage(this.pos, this.statueModel, this.provider));
         }
     }
 
     public void setTexture(TextureProvider<?, ?> provider, StatueTexture texture) {
-        if (this.worldObj.isRemote) {
+        if (this.world.isRemote) {
             if (texture == null || provider == null) {
                 this.queuedMessages.add(new RemoveTextureMessage(this.pos));
             } else {
@@ -358,11 +358,11 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
     }
 
     public void send(IMessage message) {
-        if (this.worldObj.isRemote) {
+        if (this.world.isRemote) {
             Statue.WRAPPER.sendToServer(message);
         } else {
-            NetworkRegistry.TargetPoint target = new NetworkRegistry.TargetPoint(this.worldObj.provider.getDimension(), this.pos.getX() + 0.5, this.pos.getY(), this.pos.getZ() + 0.5, 1024);
-            Statue.WRAPPER.sendToAllAround(message, target);
+            NetworkRegistry.TargetPoint target = new NetworkRegistry.TargetPoint(this.world.provider.getDimension(), this.pos.getX() + 0.5, this.pos.getY(), this.pos.getZ() + 0.5, 1);
+            Statue.WRAPPER.sendToAllTracking(message, target);
         }
     }
 
@@ -398,13 +398,13 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
     public void setProperty(StatueProperty property, float value) {
         this.properties.put(property, value);
         this.propertiesDirty = true;
-        if (this.worldObj != null && !this.worldObj.isRemote) {
+        if (this.world != null && !this.world.isRemote) {
             this.markDirty();
         }
     }
 
     public void setPropertiesNetwork(Map<StatueProperty, Float> properties) {
-        if (this.worldObj.isRemote) {
+        if (this.world.isRemote) {
             this.interpAmounts = new HashMap<>();
             for (Map.Entry<StatueProperty, Float> entry : properties.entrySet()) {
                 StatueProperty property = entry.getKey();
@@ -419,12 +419,10 @@ public class StatueBlockEntity extends TileEntity implements ITickable {
 
     public void setLocked(boolean locked, boolean send) {
         this.locked = locked;
-        if (!this.worldObj.isRemote) {
+        if (!this.world.isRemote) {
             this.markDirty();
-        } else {
-            if (send) {
-                this.send(new SetLockedMessage(this.pos, locked));
-            }
+        } else if (send) {
+            this.send(new SetLockedMessage(this.pos, locked));
         }
     }
 

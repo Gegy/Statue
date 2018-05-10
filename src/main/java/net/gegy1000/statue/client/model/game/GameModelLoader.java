@@ -180,7 +180,7 @@ public enum GameModelLoader {
                     TexturedQuad[] quads = this.getTexturedQuads(box);
                     if (quads != null) {
                         PositionTextureVertex[] vertices = quads[1].vertexPositions;
-                        cube.setTextureMirrored((vertices[2].vector3D.yCoord - vertices[0].vector3D.yCoord - cube.getDimensionY()) / 2.0F < 0.0F);
+                        cube.setTextureMirrored((vertices[2].vector3D.y - vertices[0].vector3D.y - cube.getDimensionY()) / 2.0F < 0.0F);
                         if (vertices[cube.isTextureMirrored() ? 2 : 1].texturePositionY > vertices[cube.isTextureMirrored() ? 1 : 2].texturePositionY) {
                             cube.setTextureMirrored(!cube.isTextureMirrored());
                         }

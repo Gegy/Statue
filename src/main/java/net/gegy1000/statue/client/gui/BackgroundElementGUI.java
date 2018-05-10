@@ -23,6 +23,8 @@ import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public abstract class BackgroundElementGUI extends GuiScreen implements IElementGUI {
+    private final Object elementLock = new Object();
+
     private final List<Element> elements = new ArrayList<>();
     private Element currentlyClicking;
 
@@ -30,7 +32,9 @@ public abstract class BackgroundElementGUI extends GuiScreen implements IElement
 
     @Override
     public void addElement(Element element) {
-        this.elements.add(element);
+        synchronized (this.elementLock) {
+            this.elements.add(element);
+        }
         element.init();
     }
 
@@ -41,27 +45,35 @@ public abstract class BackgroundElementGUI extends GuiScreen implements IElement
 
     @Override
     public void removeElement(Element element) {
-        this.elements.remove(element);
+        synchronized (this.elementLock) {
+            this.elements.remove(element);
+        }
     }
 
     @Override
     public void clearElements() {
-        this.elements.clear();
+        synchronized (this.elementLock) {
+            this.elements.clear();
+        }
     }
 
     @Override
     public void sendElementToFront(Element element) {
-        if (this.elements.contains(element)) {
-            this.elements.remove(element);
-            this.elements.add(element);
+        synchronized (this.elementLock) {
+            if (this.elements.contains(element)) {
+                this.elements.remove(element);
+                this.elements.add(element);
+            }
         }
     }
 
     @Override
     public void sendElementToBack(Element element) {
-        if (this.elements.contains(element)) {
-            this.elements.remove(element);
-            this.elements.add(0, element);
+        synchronized (this.elementLock) {
+            if (this.elements.contains(element)) {
+                this.elements.remove(element);
+                this.elements.add(0, element);
+            }
         }
     }
 
@@ -84,7 +96,7 @@ public abstract class BackgroundElementGUI extends GuiScreen implements IElement
 
     @Override
     public FontRenderer getFontRenderer() {
-        return this.mc.fontRendererObj;
+        return this.mc.fontRenderer;
     }
 
     @Override
@@ -123,7 +135,9 @@ public abstract class BackgroundElementGUI extends GuiScreen implements IElement
         float preciseMouseX = this.getPreciseMouseX();
         float preciseMouseY = this.getPreciseMouseY();
         this.drawScreen(preciseMouseX, preciseMouseY, partialTicks);
-        this.elements.forEach(element -> this.renderElement(element, preciseMouseX, preciseMouseY, partialTicks));
+        synchronized (this.elementLock) {
+            this.elements.forEach(element -> this.renderElement(element, preciseMouseX, preciseMouseY, partialTicks));
+        }
 
         int scrollAmount = Mouse.getDWheel();
         if (scrollAmount != 0) {
@@ -217,13 +231,17 @@ public abstract class BackgroundElementGUI extends GuiScreen implements IElement
 
     public List<Element> getPostOrderElements() {
         List<Element> result = new ArrayList<>();
-        this.traverseRecursively(this.elements, result);
+        synchronized (this.elementLock) {
+            this.traverseRecursively(this.elements, result);
+        }
         return Lists.reverse(result);
     }
 
     public List<Element> getPreOrderElements() {
         List<Element> result = new ArrayList<>();
-        this.traverseRecursively(this.elements, result);
+        synchronized (this.elementLock) {
+            this.traverseRecursively(this.elements, result);
+        }
         return result;
     }
 

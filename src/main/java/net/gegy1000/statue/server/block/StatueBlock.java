@@ -1,7 +1,6 @@
 package net.gegy1000.statue.server.block;
 
 import net.gegy1000.statue.Statue;
-import net.gegy1000.statue.server.api.DefaultRenderedItem;
 import net.gegy1000.statue.server.block.entity.StatueBlockEntity;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
@@ -24,7 +23,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class StatueBlock extends BlockContainer implements DefaultRenderedItem {
+public class StatueBlock extends BlockContainer {
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
     public StatueBlock() {
@@ -33,6 +32,7 @@ public class StatueBlock extends BlockContainer implements DefaultRenderedItem {
         this.setCreativeTab(CreativeTabs.DECORATIONS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         this.setSoundType(SoundType.WOOD);
+        this.setUnlocalizedName(Statue.MODID + ".statue");
     }
 
     @Override
@@ -65,7 +65,7 @@ public class StatueBlock extends BlockContainer implements DefaultRenderedItem {
     }
 
     @Override
-    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing().getOpposite());
     }
 
@@ -103,14 +103,8 @@ public class StatueBlock extends BlockContainer implements DefaultRenderedItem {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            this.openGUI(world, pos);
-        }
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        Statue.PROXY.openSelectModelGui(world, pos);
         return true;
-    }
-
-    private void openGUI(World world, BlockPos pos) {
-        Statue.PROXY.selectModel(world, pos);
     }
 }

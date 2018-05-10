@@ -17,9 +17,9 @@ import net.ilexiconn.llibrary.client.gui.element.SliderElement;
 import net.ilexiconn.llibrary.client.gui.element.StateButtonElement;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -50,7 +50,7 @@ public class StatueModelGUI extends BackgroundElementGUI implements ModelViewGUI
     private SliderElement<StatueModelGUI, RotationProperty> rotationX, rotationY, rotationZ;
     private SliderElement<StatueModelGUI, TransformProperty> offsetX, offsetY, offsetZ;
     private SliderElement<StatueModelGUI, TransformProperty> scaleX, scaleY, scaleZ;
-    
+
     private StatueModel model;
 
     private boolean locked;
@@ -66,7 +66,7 @@ public class StatueModelGUI extends BackgroundElementGUI implements ModelViewGUI
         int width = this.width - 122;
         int height = (int) (width / 1.893);
 
-        boolean enabled = this.entity.canInteract(this.mc.thePlayer);
+        boolean enabled = this.entity.canInteract(this.mc.player);
 
         this.addElement(this.viewElement = new ModelViewElement<>(this, (this.width - 122.0F) / 2 - width / 2 + 122.0F, (this.height - 32) / 2 - height / 2 + 14, width, height));
         this.viewElement.setVisible(this.drawBackground);
@@ -113,7 +113,7 @@ public class StatueModelGUI extends BackgroundElementGUI implements ModelViewGUI
         this.addElement(this.scaleZ = (SliderElement<StatueModelGUI, TransformProperty>) new SliderElement<>(this, 81.0F, 114.0F, this.propertyScaleZ, 0.1F).setEnabled(enabled));
 
         this.addElement(new LabelElement<>(this, "Locked", 3.0F, 140.0F));
-        this.addElement(new CheckboxElement<>(this, 3.0F, 150.0F, this.propertyLocked).setEnabled(this.entity.canInteract(this.mc.thePlayer, true)));
+        this.addElement(new CheckboxElement<>(this, 3.0F, 150.0F, this.propertyLocked).setEnabled(this.entity.canInteract(this.mc.player, true)));
 
         if (Loader.isModLoaded("qubble")) {
             this.addElement(new ButtonElement<>(this, "Qubble", this.width - 50.0F, 0.0F, 50, 14, button -> {
@@ -195,7 +195,7 @@ public class StatueModelGUI extends BackgroundElementGUI implements ModelViewGUI
         this.propertyScaleZ.set(this.entity.getProperty(StatueProperty.SCALE_Z));
 
         this.propertyLocked = new CheckboxProperty(state -> {
-            if (this.entity.canInteract(this.mc.thePlayer, true)) {
+            if (this.entity.canInteract(this.mc.player, true)) {
                 this.locked = state;
                 this.entity.setLocked(state, true);
             }
@@ -209,7 +209,7 @@ public class StatueModelGUI extends BackgroundElementGUI implements ModelViewGUI
         this.drawRectangle(0, this.height - 18, this.width, 18, LLibrary.CONFIG.getPrimaryColor());
         this.drawRectangle(0, 0, 122, this.height, LLibrary.CONFIG.getPrimaryColor());
 
-        this.fontRendererObj.drawString("Statue", 3, 3, LLibrary.CONFIG.getTextColor());
+        this.fontRenderer.drawString("Statue", 3, 3, LLibrary.CONFIG.getTextColor());
 
         StatueModel selectedModel = this.getSelectedModel();
         if (selectedModel != null) {
@@ -224,7 +224,7 @@ public class StatueModelGUI extends BackgroundElementGUI implements ModelViewGUI
             } else {
                 displayName = "\"" + name + "\" by " + author;
             }
-            this.fontRendererObj.drawString(displayName, (this.width - 122) / 2 + 122 - this.fontRendererObj.getStringWidth(displayName) / 2, 3.0F, LLibrary.CONFIG.getTextColor(), false);
+            this.fontRenderer.drawString(displayName, (this.width - 122) / 2 + 122 - this.fontRenderer.getStringWidth(displayName) / 2, 3.0F, LLibrary.CONFIG.getTextColor(), false);
         }
     }
 
@@ -242,12 +242,12 @@ public class StatueModelGUI extends BackgroundElementGUI implements ModelViewGUI
         float g = (float) (color >> 8 & 0xFF) / 255.0F;
         float b = (float) (color & 0xFF) / 255.0F;
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexBuffer = tessellator.getBuffer();
-        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        vertexBuffer.pos(x, y + height, 0.0).color(r, g, b, a).endVertex();
-        vertexBuffer.pos(x + width, y + height, 0.0).color(r, g, b, a).endVertex();
-        vertexBuffer.pos(x + width, y, 0.0).color(r, g, b, a).endVertex();
-        vertexBuffer.pos(x, y, 0.0).color(r, g, b, a).endVertex();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        builder.pos(x, y + height, 0.0).color(r, g, b, a).endVertex();
+        builder.pos(x + width, y + height, 0.0).color(r, g, b, a).endVertex();
+        builder.pos(x + width, y, 0.0).color(r, g, b, a).endVertex();
+        builder.pos(x, y, 0.0).color(r, g, b, a).endVertex();
         tessellator.draw();
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();

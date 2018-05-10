@@ -1,27 +1,40 @@
 package net.gegy1000.statue.client.render;
 
 import net.gegy1000.statue.Statue;
-import net.gegy1000.statue.client.render.block.StatueRenderer;
-import net.gegy1000.statue.server.api.DefaultRenderedItem;
 import net.gegy1000.statue.server.block.BlockRegistry;
 import net.gegy1000.statue.server.block.entity.StatueBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
-import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = Statue.MODID, value = Side.CLIENT)
 public class RenderRegistry {
-    public static void onPreInit() {
-        for (Block block : BlockRegistry.BLOCKS) {
-            if (block instanceof DefaultRenderedItem) {
-                RenderRegistry.registerRenderer(block, ((DefaultRenderedItem) block).getResource(block.getUnlocalizedName().substring("tile.".length())));
-            }
-        }
+    @SubscribeEvent
+    public static void onModelRegister(ModelRegistryEvent event) {
+        RenderRegistry.registerRenderer(BlockRegistry.STATUE, "statue");
 
         ClientRegistry.bindTileEntitySpecialRenderer(StatueBlockEntity.class, new StatueRenderer());
-        ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(BlockRegistry.STATUE), 0, StatueBlockEntity.class);
+
+        Item.getItemFromBlock(BlockRegistry.STATUE).setTileEntityItemStackRenderer(new TileEntityItemStackRenderer() {
+            @Override
+            public void renderByItem(ItemStack stack, float partialTicks) {
+                TileEntitySpecialRenderer<TileEntity> renderer = TileEntityRendererDispatcher.instance.getRenderer(StatueBlockEntity.class);
+                renderer.render(null, 0.0, 0.0, 0.0, partialTicks, 0, 1.0F);
+            }
+        });
     }
 
     private static void registerRenderer(Item item, String name) {

@@ -23,12 +23,12 @@ public class RemoveTextureMessage extends AbstractMessage<RemoveTextureMessage> 
 
     @Override
     public void onClientReceived(Minecraft client, RemoveTextureMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     @Override
     public void onServerReceived(MinecraftServer server, RemoveTextureMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     protected void handle(World world, EntityPlayer player, RemoveTextureMessage message, MessageContext context) {

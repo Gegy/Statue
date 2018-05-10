@@ -1,4 +1,4 @@
-package net.gegy1000.statue.client.render.block;
+package net.gegy1000.statue.client.render;
 
 import net.gegy1000.statue.server.block.BlockRegistry;
 import net.gegy1000.statue.server.block.StatueBlock;
@@ -23,7 +23,7 @@ public class StatueRenderer extends TileEntitySpecialRenderer<StatueBlockEntity>
     private ModelBase voxelModel = new VoxelModel();
 
     @Override
-    public void renderTileEntityAt(StatueBlockEntity entity, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(StatueBlockEntity entity, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         EnumFacing facing = EnumFacing.NORTH;
         ModelBase model = null;
         ResourceLocation texture = null;

@@ -38,12 +38,12 @@ public class CreateTextureMessage extends AbstractMessage<CreateTextureMessage> 
 
     @Override
     public void onClientReceived(Minecraft client, CreateTextureMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     @Override
     public void onServerReceived(MinecraftServer server, CreateTextureMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     protected void handle(World world, EntityPlayer player, CreateTextureMessage message, MessageContext context) {

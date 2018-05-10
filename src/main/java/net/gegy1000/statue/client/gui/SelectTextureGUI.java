@@ -13,16 +13,15 @@ import net.ilexiconn.llibrary.client.gui.ElementGUI;
 import net.ilexiconn.llibrary.client.gui.element.ButtonElement;
 import net.ilexiconn.llibrary.client.gui.element.ListElement;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -134,8 +133,8 @@ public class SelectTextureGUI extends ElementGUI implements ModelViewGUI {
         this.drawRectangle(0, 0, this.width, 14, LLibrary.CONFIG.getPrimaryColor());
         this.drawRectangle(0, this.height - 18, this.width, 18, LLibrary.CONFIG.getPrimaryColor());
 
-        this.fontRendererObj.drawString("Texture Types", 4, 3, LLibrary.CONFIG.getTextColor());
-        this.fontRendererObj.drawString("Textures", 92, 3, LLibrary.CONFIG.getTextColor());
+        this.fontRenderer.drawString("Texture Types", 4, 3, LLibrary.CONFIG.getTextColor());
+        this.fontRenderer.drawString("Textures", 92, 3, LLibrary.CONFIG.getTextColor());
     }
 
     protected void drawRectangle(double x, double y, double width, double height, int color) {
@@ -147,12 +146,12 @@ public class SelectTextureGUI extends ElementGUI implements ModelViewGUI {
         float g = (float) (color >> 8 & 0xFF) / 255.0F;
         float b = (float) (color & 0xFF) / 255.0F;
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexBuffer = tessellator.getBuffer();
-        vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        vertexBuffer.pos(x, y + height, 0.0).color(r, g, b, a).endVertex();
-        vertexBuffer.pos(x + width, y + height, 0.0).color(r, g, b, a).endVertex();
-        vertexBuffer.pos(x + width, y, 0.0).color(r, g, b, a).endVertex();
-        vertexBuffer.pos(x, y, 0.0).color(r, g, b, a).endVertex();
+        BufferBuilder builder = tessellator.getBuffer();
+        builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        builder.pos(x, y + height, 0.0).color(r, g, b, a).endVertex();
+        builder.pos(x + width, y + height, 0.0).color(r, g, b, a).endVertex();
+        builder.pos(x + width, y, 0.0).color(r, g, b, a).endVertex();
+        builder.pos(x, y, 0.0).color(r, g, b, a).endVertex();
         tessellator.draw();
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();

@@ -30,12 +30,12 @@ public class SetModelMessage extends AbstractMessage<SetModelMessage> {
 
     @Override
     public void onClientReceived(Minecraft client, SetModelMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     @Override
     public void onServerReceived(MinecraftServer server, SetModelMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     protected void handle(World world, EntityPlayer player, SetModelMessage message, MessageContext context) {

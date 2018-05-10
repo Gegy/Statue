@@ -25,12 +25,12 @@ public class SetLockedMessage extends AbstractMessage<SetLockedMessage> {
 
     @Override
     public void onClientReceived(Minecraft client, SetLockedMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     @Override
     public void onServerReceived(MinecraftServer server, SetLockedMessage message, EntityPlayer player, MessageContext context) {
-        this.handle(player.worldObj, player, message, context);
+        this.handle(player.world, player, message, context);
     }
 
     protected void handle(World world, EntityPlayer player, SetLockedMessage message, MessageContext context) {
